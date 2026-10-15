@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Astronaut AR Scanner - Presentation Version</title>
+    <script type="module" src="https://ajax.googleapis.com/ajax/libs/model-viewer/3.3.0/model-viewer.min.js"></script>
+    <style>
+        body { font-family: Arial, sans-serif; text-align: center; margin: 0; background-color: #222; color: white; overflow: hidden; }
+        h1 { margin-top: 20px; position: absolute; width: 100%; top: 0; z-index: 10; }
+        model-viewer { width: 100vw; height: 100vh; background-color: #333; }
+        
+        #custom-ar-button {
+            background-color: #007bff;
+            color: white;
+            border: none;
+            border-radius: 50px;
+            padding: 15px 30px;
+            font-size: 18px;
+            font-weight: bold;
+            position: absolute;
+            bottom: 40px;
+            left: 50%;
+            transform: translateX(-50%);
+            box-shadow: 0px 4px 15px rgba(0,0,0,0.5);
+            cursor: pointer;
+            z-index: 10;
+        }
+        #custom-ar-button:active { background-color: #0056b3; }
+        
+        #ar-prompt {
+            position: absolute;
+            bottom: 20%;
+            left: 50%;
+            transform: translateX(-50%);
+            background: rgba(0, 0, 0, 0.8);
+            color: white;
+            padding: 15px 25px;
+            border-radius: 30px;
+            display: none; 
+            align-items: center;
+            gap: 15px;
+            font-weight: bold;
+            z-index: 10;
+        }
+        model-viewer[ar-status="session-started"] > #ar-prompt { display: flex; }
+    </style>
+</head>
+<body>
+    <h1>Astronaut AR Scanner</h1>
+    <model-viewer 
+        src="Astronaut.glb" 
+        ar 
+        ar-modes="webxr scene-viewer quick-look" 
+        camera-controls 
+        auto-rotate
+        rotation-per-second="30deg"
+        autoplay
+        shadow-intensity="1.5"
+        environment-image="neutral">
+        
+        <button slot="ar-button" id="custom-ar-button">
+            📷 OPEN REAL CAMERA
+        </button>
+
+        <div slot="prompt" id="ar-prompt">
+            <img src="https://modelviewer.dev/shared-assets/icons/hand.png" width="40" alt="Hand icon">
+            <span>Point at the floor and move your phone...</span>
+        </div>
+    </model-viewer>
+</body>
+</html>
