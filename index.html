@@ -28,9 +28,9 @@
         }
 
         #scanner-ui {
-            display: none; 
+            display: none;
             position: absolute; top: 0; left: 0; width: 100vw; height: 100vh;
-            z-index: 1000; pointer-events: none; 
+            z-index: 1000; pointer-events: none;
         }
 
         .top-pill {
@@ -61,10 +61,10 @@
 
         .bottom-buttons {
             position: absolute; bottom: 40px; left: 50%; transform: translateX(-50%);
-            display: flex; gap: 15px; pointer-events: auto; 
+            display: flex; gap: 15px; pointer-events: auto;
         }
         .action-btn {
-            background: white; color: black; border: none; padding: 12px 24px;
+            background: white; color: black; border: none; padding: 12px 20px;
             border-radius: 30px; font-weight: bold; font-size: 16px;
             display: flex; align-items: center; gap: 8px; box-shadow: 0 4px 10px rgba(0,0,0,0.2);
             cursor: pointer;
@@ -72,7 +72,7 @@
     </style>
 </head>
 <body>
-    
+
     <div id="start-screen">
         <h2>Astronaut AR Scanner</h2>
         <model-viewer src="Astronaut.glb" auto-rotate camera-controls shadow-intensity="1"></model-viewer>
@@ -90,12 +90,17 @@
             <div class="scan-line"></div>
         </div>
         <div class="bottom-buttons">
-            <!-- Replaced the dummy Camera button with a functional Close button -->
-            <button class="action-btn" onclick="location.reload()">❌ Close Scanner</button>
+            <button class="action-btn" onclick="switchCamera()">🔄 Switch Camera</button>
+            <button class="action-btn" onclick="window.location.href=window.location.pathname">❌ Close</button>
         </div>
     </div>
 
-    <a-scene embedded arjs="sourceType: webcam; debugUIEnabled: false;" renderer="logarithmicDepthBuffer: true;" vr-mode-ui="enabled: false" gesture-detector>
+    <!-- Script to dynamically load the selected camera before A-Frame initializes -->
+    <script>
+        const urlParams = new URLSearchParams(window.location.search);
+        const camMode = urlParams.get('cam') === 'front' ? 'user' : 'environment';
+        document.write('<a-scene embedded arjs="sourceType: webcam; debugUIEnabled: false; facingMode: ' + camMode + ';" renderer="logarithmicDepthBuffer: true;" vr-mode-ui="enabled: false" gesture-detector>');
+    </script>
         <a-marker type="pattern" url="ctu-logo1.patt" raycaster="objects: .clickable" emitevents="true" cursor="fuse: false; rayOrigin: mouse;">
             <a-entity gltf-model="Astronaut.glb" scale="1.5 1.5 1.5" position="0 0.5 0" rotation="-90 0 0" class="clickable" gesture-handler="minScale: 0.25; maxScale: 10"></a-entity>
         </a-marker>
@@ -112,9 +117,23 @@
     </a-scene>
 
     <script>
+        // Auto-start AR if the page reloaded to switch cameras
+        window.onload = function() {
+            if (new URLSearchParams(window.location.search).has('cam')) {
+                startAR();
+            }
+        };
+
         function startAR() {
             document.getElementById('start-screen').style.display = 'none';
             document.getElementById('scanner-ui').style.display = 'block';
+        }
+
+        function switchCamera() {
+            const urlParams = new URLSearchParams(window.location.search);
+            const currentCam = urlParams.get('cam');
+            const newCam = currentCam === 'front' ? 'back' : 'front';
+            window.location.href = window.location.pathname + '?cam=' + newCam;
         }
     </script>
 </body>
