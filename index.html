@@ -41,7 +41,6 @@
             white-space: nowrap;
         }
 
-        /* Adjusted to a perfect square for accurate AR marker targeting */
         .scanner-frame {
             position: absolute; top: 45%; left: 50%; transform: translate(-50%, -50%);
             width: 260px; height: 260px; 
@@ -53,7 +52,6 @@
         .bottom-left { bottom: 0; left: 0; border-right: none; border-top: none; }
         .bottom-right { bottom: 0; right: 0; border-left: none; border-top: none; }
         
-        /* New center targeting crosshair */
         .crosshair {
             position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%);
             width: 20px; height: 20px; opacity: 0.7;
@@ -104,7 +102,7 @@
         </div>
         <div class="bottom-buttons">
             <button class="action-btn" onclick="switchCamera()">🔄 Switch Camera</button>
-            <button class="action-btn" onclick="window.location.search=''">❌ Close</button>
+            <button class="action-btn" onclick="window.location.href = window.location.pathname">❌ Close</button>
         </div>
     </div>
 
@@ -115,12 +113,29 @@
             const urlParams = new URLSearchParams(window.location.search);
             const camMode = urlParams.get('cam') === 'front' ? 'user' : 'environment';
             
+            // --- THE FIX ---
+            // Intercept AR.js camera requests to force the front camera.
+            if (navigator.mediaDevices && navigator.mediaDevices.getUserMedia) {
+                const originalGetUserMedia = navigator.mediaDevices.getUserMedia.bind(navigator.mediaDevices);
+                navigator.mediaDevices.getUserMedia = function(constraints) {
+                    if (constraints && constraints.video) {
+                        if (camMode === 'user') {
+                            constraints.video.facingMode = 'user';
+                            // Deletes AR.js's locked back-camera ID so the browser obeys the front camera request
+                            delete constraints.video.deviceId;
+                        } else {
+                            constraints.video.facingMode = 'environment';
+                        }
+                    }
+                    return originalGetUserMedia(constraints);
+                };
+            }
+            // ---------------
+            
             const arContainer = document.getElementById('ar-container');
-            // Added trackingMethod: best and patternRatio optimizations
             arContainer.innerHTML = `
                 <a-scene embedded arjs="sourceType: webcam; debugUIEnabled: false; trackingMethod: best; facingMode: ${camMode};" renderer="logarithmicDepthBuffer: true;" vr-mode-ui="enabled: false" gesture-detector>
                     
-                    <!-- Added smooth attributes to eliminate 3D model jittering -->
                     <a-marker type="pattern" url="ctu-logo1.patt" smooth="true" smoothCount="10" smoothTolerance="0.01" smoothThreshold="5" raycaster="objects: .clickable" emitevents="true" cursor="fuse: false; rayOrigin: mouse;">
                         <a-entity gltf-model="Astronaut.glb" scale="1.5 1.5 1.5" position="0 0.5 0" rotation="-90 0 0" class="clickable" gesture-handler="minScale: 0.25; maxScale: 10"></a-entity>
                     </a-marker>
@@ -155,7 +170,7 @@
             const urlParams = new URLSearchParams(window.location.search);
             const currentCam = urlParams.get('cam');
             const newCam = currentCam === 'front' ? 'back' : 'front';
-            window.location.search = '?cam=' + newCam;
+            window.location.href = window.location.pathname + '?cam=' + newCam;
         }
     </script>
 </body>
