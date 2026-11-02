@@ -18,21 +18,72 @@
     <style>
         body { margin: 0; background-color: #222; overflow: hidden; font-family: Arial, sans-serif; }
         
-        /* The menu screen sits on top of everything (z-index: 9999) */
+        /* Front Menu Screen */
         #start-screen { 
             position: absolute; top: 0; left: 0; width: 100vw; height: 100vh; 
             background-color: #222; color: white; z-index: 9999; 
             display: flex; flex-direction: column; align-items: center; justify-content: flex-start;
         }
-        
         h2 { margin-top: 20px; margin-bottom: 10px; }
         model-viewer { width: 100%; height: 50vh; background-color: #333; }
         .instructions { margin: 15px; text-align: center; padding: 0 20px; }
-        
-        button { 
+        .start-btn { 
             background-color: #007bff; color: white; border: none; border-radius: 50px; 
             padding: 15px 30px; font-size: 18px; font-weight: bold; cursor: pointer; 
             box-shadow: 0px 4px 15px rgba(0,0,0,0.5); margin-top: 10px; 
+        }
+
+        /* ----- NEW SCANNER UI OVERLAY ----- */
+        #scanner-ui {
+            display: none; /* Hidden until camera starts */
+            position: absolute; top: 0; left: 0; width: 100vw; height: 100vh;
+            z-index: 1000;
+            pointer-events: none; /* Allows touch gestures to pass through to the 3D model */
+        }
+
+        /* Top Pill */
+        .top-pill {
+            position: absolute; top: 40px; left: 50%; transform: translateX(-50%);
+            background: rgba(255, 255, 255, 0.95); color: black;
+            padding: 12px 24px; border-radius: 30px; font-weight: bold; font-size: 16px;
+            display: flex; align-items: center; gap: 8px; box-shadow: 0 4px 10px rgba(0,0,0,0.2);
+            white-space: nowrap;
+        }
+
+        /* Scanner Frame */
+        .scanner-frame {
+            position: absolute; top: 45%; left: 50%; transform: translate(-50%, -50%);
+            width: 250px; height: 350px;
+        }
+
+        /* 4 White Corners */
+        .corner { position: absolute; width: 40px; height: 40px; border: 4px solid white; border-radius: 8px; }
+        .top-left { top: 0; left: 0; border-right: none; border-bottom: none; }
+        .top-right { top: 0; right: 0; border-left: none; border-bottom: none; }
+        .bottom-left { bottom: 0; left: 0; border-right: none; border-top: none; }
+        .bottom-right { bottom: 0; right: 0; border-left: none; border-top: none; }
+
+        /* Animated Green Scan Line */
+        .scan-line {
+            position: absolute; top: 0; left: 5%; width: 90%; height: 3px;
+            background: #00ff00; box-shadow: 0 0 12px #00ff00;
+            animation: scan 2s infinite linear alternate;
+        }
+        @keyframes scan {
+            0% { top: 0; }
+            100% { top: 100%; }
+        }
+
+        /* Bottom Buttons */
+        .bottom-buttons {
+            position: absolute; bottom: 40px; left: 50%; transform: translateX(-50%);
+            display: flex; gap: 15px;
+            pointer-events: auto; /* Makes buttons clickable */
+        }
+        .action-btn {
+            background: white; color: black; border: none; padding: 12px 24px;
+            border-radius: 30px; font-weight: bold; font-size: 16px;
+            display: flex; align-items: center; gap: 8px; box-shadow: 0 4px 10px rgba(0,0,0,0.2);
         }
     </style>
 </head>
@@ -45,23 +96,44 @@
         <div class="instructions">
             <p>1. Open the framed CTU logo or Hiro marker.<br>2. Click below, point your camera, and pinch to resize.</p>
         </div>
-        <button onclick="startAR()">📷 OPEN REAL CAMERA</button>
+        <button class="start-btn" onclick="startAR()">📷 OPEN REAL CAMERA</button>
     </div>
 
-    <!-- AR Camera runs behind the menu screen -->
+    <!-- NEW: The Visual Scanner Overlay -->
+    <div id="scanner-ui">
+        <!-- Top Instruction -->
+        <div class="top-pill">🔍 Point the camera at a marker</div>
+        
+        <!-- Center Box with Green Line -->
+        <div class="scanner-frame">
+            <div class="corner top-left"></div>
+            <div class="corner top-right"></div>
+            <div class="corner bottom-left"></div>
+            <div class="corner bottom-right"></div>
+            <div class="scan-line"></div>
+        </div>
+
+        <!-- Bottom Buttons -->
+        <div class="bottom-buttons">
+            <button class="action-btn" onclick="location.reload()">📖 Astronauts</button>
+            <button class="action-btn">🔄 Camera</button>
+        </div>
+    </div>
+
+    <!-- AR Camera runs behind everything -->
     <a-scene embedded arjs="sourceType: webcam; debugUIEnabled: false;" renderer="logarithmicDepthBuffer: true;" vr-mode-ui="enabled: false" gesture-detector>
         
-        <!-- Target 1: ctu-logo1.patt (First CTU Logo) -->
+        <!-- Target 1: First CTU Logo -->
         <a-marker type="pattern" url="ctu-logo1.patt" raycaster="objects: .clickable" emitevents="true" cursor="fuse: false; rayOrigin: mouse;">
             <a-entity gltf-model="Astronaut.glb" scale="1.5 1.5 1.5" position="0 0.5 0" rotation="-90 0 0" class="clickable" gesture-handler="minScale: 0.25; maxScale: 10"></a-entity>
         </a-marker>
 
-        <!-- Target 2: ctu-logo.patt (Backup name for First CTU Logo) -->
+        <!-- Target 2: Backup name for First CTU Logo -->
         <a-marker type="pattern" url="ctu-logo.patt" raycaster="objects: .clickable" emitevents="true" cursor="fuse: false; rayOrigin: mouse;">
             <a-entity gltf-model="Astronaut.glb" scale="1.5 1.5 1.5" position="0 0.5 0" rotation="-90 0 0" class="clickable" gesture-handler="minScale: 0.25; maxScale: 10"></a-entity>
         </a-marker>
 
-        <!-- Target 3: ctu-logo2.patt (Second CTU Logo - College of Technology) -->
+        <!-- Target 3: Second CTU Logo -->
         <a-marker type="pattern" url="ctu-logo2.patt" raycaster="objects: .clickable" emitevents="true" cursor="fuse: false; rayOrigin: mouse;">
             <a-entity gltf-model="Astronaut.glb" scale="1.5 1.5 1.5" position="0 0.5 0" rotation="-90 0 0" class="clickable" gesture-handler="minScale: 0.25; maxScale: 10"></a-entity>
         </a-marker>
@@ -75,9 +147,10 @@
     </a-scene>
 
     <script>
-        // Simply hides the overlay menu, revealing the active camera underneath
         function startAR() {
+            // Hides the start menu and turns on the scanner visual UI
             document.getElementById('start-screen').style.display = 'none';
+            document.getElementById('scanner-ui').style.display = 'block';
         }
     </script>
 </body>
