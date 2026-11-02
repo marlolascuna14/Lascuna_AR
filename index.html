@@ -51,18 +51,22 @@
     <!-- AR Camera runs behind the menu screen -->
     <a-scene embedded arjs="sourceType: webcam; debugUIEnabled: false;" renderer="logarithmicDepthBuffer: true;" vr-mode-ui="enabled: false" gesture-detector>
         
-        <!-- Target 1: ctu-logo1.patt -->
+        <!-- Target 1: ctu-logo1.patt (First CTU Logo) -->
         <a-marker type="pattern" url="ctu-logo1.patt" raycaster="objects: .clickable" emitevents="true" cursor="fuse: false; rayOrigin: mouse;">
-            <!-- Scale increased to 1.5 to make it bigger, position adjusted to center -->
             <a-entity gltf-model="Astronaut.glb" scale="1.5 1.5 1.5" position="0 0.5 0" rotation="-90 0 0" class="clickable" gesture-handler="minScale: 0.25; maxScale: 10"></a-entity>
         </a-marker>
 
-        <!-- Target 2: ctu-logo.patt (Backup name) -->
+        <!-- Target 2: ctu-logo.patt (Backup name for First CTU Logo) -->
         <a-marker type="pattern" url="ctu-logo.patt" raycaster="objects: .clickable" emitevents="true" cursor="fuse: false; rayOrigin: mouse;">
             <a-entity gltf-model="Astronaut.glb" scale="1.5 1.5 1.5" position="0 0.5 0" rotation="-90 0 0" class="clickable" gesture-handler="minScale: 0.25; maxScale: 10"></a-entity>
         </a-marker>
 
-        <!-- Target 3: Standard Hiro Marker Backup -->
+        <!-- Target 3: ctu-logo2.patt (Second CTU Logo - College of Technology) -->
+        <a-marker type="pattern" url="ctu-logo2.patt" raycaster="objects: .clickable" emitevents="true" cursor="fuse: false; rayOrigin: mouse;">
+            <a-entity gltf-model="Astronaut.glb" scale="1.5 1.5 1.5" position="0 0.5 0" rotation="-90 0 0" class="clickable" gesture-handler="minScale: 0.25; maxScale: 10"></a-entity>
+        </a-marker>
+
+        <!-- Target 4: Standard Hiro Marker Backup -->
         <a-marker preset="hiro" raycaster="objects: .clickable" emitevents="true" cursor="fuse: false; rayOrigin: mouse;">
             <a-entity gltf-model="Astronaut.glb" scale="1.5 1.5 1.5" position="0 0.5 0" rotation="-90 0 0" class="clickable" gesture-handler="minScale: 0.25; maxScale: 10"></a-entity>
         </a-marker>
