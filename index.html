@@ -134,25 +134,21 @@
         raycaster="objects: .clickable" 
         cursor="fuse: false; rayOrigin: mouse;">
         
-        <a-assets>
-            <a-asset-item id="astro-model" src="Astronaut.glb"></a-asset-item>
-        </a-assets>
-
-        <!-- CHANGED: rotation="0 0 0" makes it stand perfectly vertical. position="0 0 0" centers it exactly on the physical paper. -->
+        <!-- Scaled down to 0.1 to prevent physical clipping on paper targets -->
         <a-marker type="pattern" url="ctu-logo1.patt" emitevents="true">
-            <a-entity gltf-model="#astro-model" scale="0.2 0.2 0.2" position="0 0 0" rotation="0 0 0" class="clickable" gesture-handler="minScale: 0.05; maxScale: 5"></a-entity>
+            <a-entity gltf-model="Astronaut.glb" scale="0.1 0.1 0.1" position="0 0 0" rotation="-90 0 0" class="clickable" gesture-handler="minScale: 0.02; maxScale: 5"></a-entity>
         </a-marker>
         
         <a-marker type="pattern" url="ctu-logo.patt" emitevents="true">
-            <a-entity gltf-model="#astro-model" scale="0.2 0.2 0.2" position="0 0 0" rotation="0 0 0" class="clickable" gesture-handler="minScale: 0.05; maxScale: 5"></a-entity>
+            <a-entity gltf-model="Astronaut.glb" scale="0.1 0.1 0.1" position="0 0 0" rotation="-90 0 0" class="clickable" gesture-handler="minScale: 0.02; maxScale: 5"></a-entity>
         </a-marker>
         
         <a-marker type="pattern" url="ctu-logo2.patt" emitevents="true">
-            <a-entity gltf-model="#astro-model" scale="0.2 0.2 0.2" position="0 0 0" rotation="0 0 0" class="clickable" gesture-handler="minScale: 0.05; maxScale: 5"></a-entity>
+            <a-entity gltf-model="Astronaut.glb" scale="0.1 0.1 0.1" position="0 0 0" rotation="-90 0 0" class="clickable" gesture-handler="minScale: 0.02; maxScale: 5"></a-entity>
         </a-marker>
         
         <a-marker preset="hiro" emitevents="true">
-            <a-entity gltf-model="#astro-model" scale="0.2 0.2 0.2" position="0 0 0" rotation="0 0 0" class="clickable" gesture-handler="minScale: 0.05; maxScale: 5"></a-entity>
+            <a-entity gltf-model="Astronaut.glb" scale="0.1 0.1 0.1" position="0 0 0" rotation="-90 0 0" class="clickable" gesture-handler="minScale: 0.02; maxScale: 5"></a-entity>
         </a-marker>
         
         <a-entity camera></a-entity>
