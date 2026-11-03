@@ -130,28 +130,32 @@
         arjs="sourceType: webcam; debugUIEnabled: false;" 
         renderer="logarithmicDepthBuffer: true;" 
         vr-mode-ui="enabled: false" 
-        gesture-detector
-        raycaster="objects: .clickable" 
-        cursor="fuse: false; rayOrigin: mouse;">
+        gesture-detector>
         
-        <!-- Scaled down to 0.1 to prevent physical clipping on paper targets -->
+        <!-- Safely loads the 3D model exactly once to prevent memory crashes -->
+        <a-assets timeout="30000">
+            <a-asset-item id="astro-model" src="Astronaut.glb"></a-asset-item>
+        </a-assets>
+
+        <!-- scale="0.5 0.5 0.5" is the safe size zone. rotation="-90 0 0" forces it to stand up perfectly vertical. -->
         <a-marker type="pattern" url="ctu-logo1.patt" emitevents="true">
-            <a-entity gltf-model="Astronaut.glb" scale="0.1 0.1 0.1" position="0 0 0" rotation="-90 0 0" class="clickable" gesture-handler="minScale: 0.02; maxScale: 5"></a-entity>
+            <a-entity gltf-model="#astro-model" scale="0.5 0.5 0.5" position="0 0 0" rotation="-90 0 0" class="clickable" gesture-handler="minScale: 0.1; maxScale: 5"></a-entity>
         </a-marker>
         
         <a-marker type="pattern" url="ctu-logo.patt" emitevents="true">
-            <a-entity gltf-model="Astronaut.glb" scale="0.1 0.1 0.1" position="0 0 0" rotation="-90 0 0" class="clickable" gesture-handler="minScale: 0.02; maxScale: 5"></a-entity>
+            <a-entity gltf-model="#astro-model" scale="0.5 0.5 0.5" position="0 0 0" rotation="-90 0 0" class="clickable" gesture-handler="minScale: 0.1; maxScale: 5"></a-entity>
         </a-marker>
         
         <a-marker type="pattern" url="ctu-logo2.patt" emitevents="true">
-            <a-entity gltf-model="Astronaut.glb" scale="0.1 0.1 0.1" position="0 0 0" rotation="-90 0 0" class="clickable" gesture-handler="minScale: 0.02; maxScale: 5"></a-entity>
+            <a-entity gltf-model="#astro-model" scale="0.5 0.5 0.5" position="0 0 0" rotation="-90 0 0" class="clickable" gesture-handler="minScale: 0.1; maxScale: 5"></a-entity>
         </a-marker>
         
         <a-marker preset="hiro" emitevents="true">
-            <a-entity gltf-model="Astronaut.glb" scale="0.1 0.1 0.1" position="0 0 0" rotation="-90 0 0" class="clickable" gesture-handler="minScale: 0.02; maxScale: 5"></a-entity>
+            <a-entity gltf-model="#astro-model" scale="0.5 0.5 0.5" position="0 0 0" rotation="-90 0 0" class="clickable" gesture-handler="minScale: 0.1; maxScale: 5"></a-entity>
         </a-marker>
         
-        <a-entity camera></a-entity>
+        <!-- The touch raycaster MUST be attached to the camera, not the markers -->
+        <a-entity camera raycaster="objects: .clickable" cursor="fuse: false; rayOrigin: mouse;"></a-entity>
     </a-scene>
 
     <script>
