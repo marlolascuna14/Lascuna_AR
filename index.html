@@ -5,7 +5,6 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Astronaut AR Scanner</title>
     
-    <!-- CRITICAL FIX: Intercept camera request BEFORE A-Frame loads -->
     <script>
         const urlParams = new URLSearchParams(window.location.search);
         const camMode = urlParams.get('cam') === 'front' ? 'user' : 'environment';
@@ -16,7 +15,7 @@
                 if (constraints && constraints.video) {
                     if (camMode === 'user') {
                         constraints.video.facingMode = 'user';
-                        delete constraints.video.deviceId; // Force front camera override
+                        delete constraints.video.deviceId;
                     } else {
                         constraints.video.facingMode = 'environment';
                     }
@@ -98,7 +97,6 @@
             cursor: pointer;
         }
         
-        /* Overrides to prevent the extreme camera zoom effect */
         video { margin: 0 !important; top: 0 !important; left: 0 !important; width: 100% !important; height: 100% !important; object-fit: cover !important; }
     </style>
 </head>
@@ -127,23 +125,30 @@
         </div>
     </div>
 
-    <!-- AR Scene is now static to ensure models load correctly -->
-    <a-scene embedded arjs="sourceType: webcam; debugUIEnabled: false; trackingMethod: best;" renderer="logarithmicDepthBuffer: true;" vr-mode-ui="enabled: false" gesture-detector>
+    <!-- MOVED THE TOUCH CURSOR TO THE MAIN SCENE TAG -->
+    <a-scene 
+        embedded 
+        arjs="sourceType: webcam; debugUIEnabled: false; trackingMethod: best;" 
+        renderer="logarithmicDepthBuffer: true;" 
+        vr-mode-ui="enabled: false" 
+        gesture-detector
+        raycaster="objects: .clickable" 
+        cursor="fuse: false; rayOrigin: mouse;">
         
-        <!-- Removed 'smooth' attributes for faster raw detection on printed paper -->
-        <a-marker type="pattern" url="ctu-logo1.patt" raycaster="objects: .clickable" emitevents="true" cursor="fuse: false; rayOrigin: mouse;">
+        <!-- REMOVED THE TOUCH CURSOR FROM THE INDIVIDUAL MARKERS -->
+        <a-marker type="pattern" url="ctu-logo1.patt" emitevents="true">
             <a-entity gltf-model="Astronaut.glb" scale="1.5 1.5 1.5" position="0 0.5 0" rotation="-90 0 0" class="clickable" gesture-handler="minScale: 0.25; maxScale: 10"></a-entity>
         </a-marker>
         
-        <a-marker type="pattern" url="ctu-logo.patt" raycaster="objects: .clickable" emitevents="true" cursor="fuse: false; rayOrigin: mouse;">
+        <a-marker type="pattern" url="ctu-logo.patt" emitevents="true">
             <a-entity gltf-model="Astronaut.glb" scale="1.5 1.5 1.5" position="0 0.5 0" rotation="-90 0 0" class="clickable" gesture-handler="minScale: 0.25; maxScale: 10"></a-entity>
         </a-marker>
         
-        <a-marker type="pattern" url="ctu-logo2.patt" raycaster="objects: .clickable" emitevents="true" cursor="fuse: false; rayOrigin: mouse;">
+        <a-marker type="pattern" url="ctu-logo2.patt" emitevents="true">
             <a-entity gltf-model="Astronaut.glb" scale="1.5 1.5 1.5" position="0 0.5 0" rotation="-90 0 0" class="clickable" gesture-handler="minScale: 0.25; maxScale: 10"></a-entity>
         </a-marker>
         
-        <a-marker preset="hiro" raycaster="objects: .clickable" emitevents="true" cursor="fuse: false; rayOrigin: mouse;">
+        <a-marker preset="hiro" emitevents="true">
             <a-entity gltf-model="Astronaut.glb" scale="1.5 1.5 1.5" position="0 0.5 0" rotation="-90 0 0" class="clickable" gesture-handler="minScale: 0.25; maxScale: 10"></a-entity>
         </a-marker>
         
@@ -151,14 +156,12 @@
     </a-scene>
 
     <script>
-        // Check if page was reloaded for camera switch
         window.onload = function() {
             if (new URLSearchParams(window.location.search).has('cam')) {
                 startAR();
             }
         };
 
-        // Fixes video layout aspect ratio glitch on some mobile browsers
         window.addEventListener('camera-init', () => {
             setTimeout(() => { window.dispatchEvent(new Event('resize')); }, 1000);
         });
