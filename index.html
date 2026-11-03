@@ -125,31 +125,34 @@
         </div>
     </div>
 
-    <!-- MOVED THE TOUCH CURSOR TO THE MAIN SCENE TAG -->
     <a-scene 
         embedded 
-        arjs="sourceType: webcam; debugUIEnabled: false; trackingMethod: best;" 
+        arjs="sourceType: webcam; debugUIEnabled: false;" 
         renderer="logarithmicDepthBuffer: true;" 
         vr-mode-ui="enabled: false" 
         gesture-detector
         raycaster="objects: .clickable" 
         cursor="fuse: false; rayOrigin: mouse;">
         
-        <!-- REMOVED THE TOUCH CURSOR FROM THE INDIVIDUAL MARKERS -->
-        <a-marker type="pattern" url="ctu-logo1.patt" emitevents="true">
-            <a-entity gltf-model="Astronaut.glb" scale="1.5 1.5 1.5" position="0 0.5 0" rotation="-90 0 0" class="clickable" gesture-handler="minScale: 0.25; maxScale: 10"></a-entity>
+        <!-- Pre-loads the model once to prevent rendering crashes -->
+        <a-assets>
+            <a-asset-item id="astro-model" src="Astronaut.glb"></a-asset-item>
+        </a-assets>
+
+        <a-marker type="pattern" url="ctu-logo1.patt" emitevents="true" id="marker1">
+            <a-entity gltf-model="#astro-model" scale="1.5 1.5 1.5" position="0 0.5 0" rotation="-90 0 0" class="clickable" gesture-handler="minScale: 0.25; maxScale: 10"></a-entity>
         </a-marker>
         
-        <a-marker type="pattern" url="ctu-logo.patt" emitevents="true">
-            <a-entity gltf-model="Astronaut.glb" scale="1.5 1.5 1.5" position="0 0.5 0" rotation="-90 0 0" class="clickable" gesture-handler="minScale: 0.25; maxScale: 10"></a-entity>
+        <a-marker type="pattern" url="ctu-logo.patt" emitevents="true" id="marker2">
+            <a-entity gltf-model="#astro-model" scale="1.5 1.5 1.5" position="0 0.5 0" rotation="-90 0 0" class="clickable" gesture-handler="minScale: 0.25; maxScale: 10"></a-entity>
         </a-marker>
         
-        <a-marker type="pattern" url="ctu-logo2.patt" emitevents="true">
-            <a-entity gltf-model="Astronaut.glb" scale="1.5 1.5 1.5" position="0 0.5 0" rotation="-90 0 0" class="clickable" gesture-handler="minScale: 0.25; maxScale: 10"></a-entity>
+        <a-marker type="pattern" url="ctu-logo2.patt" emitevents="true" id="marker3">
+            <a-entity gltf-model="#astro-model" scale="1.5 1.5 1.5" position="0 0.5 0" rotation="-90 0 0" class="clickable" gesture-handler="minScale: 0.25; maxScale: 10"></a-entity>
         </a-marker>
         
-        <a-marker preset="hiro" emitevents="true">
-            <a-entity gltf-model="Astronaut.glb" scale="1.5 1.5 1.5" position="0 0.5 0" rotation="-90 0 0" class="clickable" gesture-handler="minScale: 0.25; maxScale: 10"></a-entity>
+        <a-marker preset="hiro" emitevents="true" id="marker4">
+            <a-entity gltf-model="#astro-model" scale="1.5 1.5 1.5" position="0 0.5 0" rotation="-90 0 0" class="clickable" gesture-handler="minScale: 0.25; maxScale: 10"></a-entity>
         </a-marker>
         
         <a-entity camera></a-entity>
