@@ -79,6 +79,9 @@
         }
         
         #ar-container { width: 100vw; height: 100vh; position: absolute; top: 0; left: 0; }
+        
+        /* Forces the injected video feed to properly cover the screen without distorting the aspect ratio */
+        video { object-fit: cover !important; }
     </style>
 </head>
 <body>
@@ -113,15 +116,13 @@
             const urlParams = new URLSearchParams(window.location.search);
             const camMode = urlParams.get('cam') === 'front' ? 'user' : 'environment';
             
-            // --- THE FIX ---
-            // Intercept AR.js camera requests to force the front camera.
+            // Intercept AR.js camera requests to force the front camera when requested.
             if (navigator.mediaDevices && navigator.mediaDevices.getUserMedia) {
                 const originalGetUserMedia = navigator.mediaDevices.getUserMedia.bind(navigator.mediaDevices);
                 navigator.mediaDevices.getUserMedia = function(constraints) {
                     if (constraints && constraints.video) {
                         if (camMode === 'user') {
                             constraints.video.facingMode = 'user';
-                            // Deletes AR.js's locked back-camera ID so the browser obeys the front camera request
                             delete constraints.video.deviceId;
                         } else {
                             constraints.video.facingMode = 'environment';
@@ -130,11 +131,11 @@
                     return originalGetUserMedia(constraints);
                 };
             }
-            // ---------------
             
             const arContainer = document.getElementById('ar-container');
+            // Added high-resolution dimensions (1280x960) to eliminate the extreme zoom effect
             arContainer.innerHTML = `
-                <a-scene embedded arjs="sourceType: webcam; debugUIEnabled: false; trackingMethod: best; facingMode: ${camMode};" renderer="logarithmicDepthBuffer: true;" vr-mode-ui="enabled: false" gesture-detector>
+                <a-scene embedded arjs="sourceType: webcam; sourceWidth:1280; sourceHeight:960; displayWidth: 1280; displayHeight: 960; debugUIEnabled: false; trackingMethod: best; facingMode: ${camMode};" renderer="logarithmicDepthBuffer: true;" vr-mode-ui="enabled: false" gesture-detector>
                     
                     <a-marker type="pattern" url="ctu-logo1.patt" smooth="true" smoothCount="10" smoothTolerance="0.01" smoothThreshold="5" raycaster="objects: .clickable" emitevents="true" cursor="fuse: false; rayOrigin: mouse;">
                         <a-entity gltf-model="Astronaut.glb" scale="1.5 1.5 1.5" position="0 0.5 0" rotation="-90 0 0" class="clickable" gesture-handler="minScale: 0.25; maxScale: 10"></a-entity>
